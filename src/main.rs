@@ -71,11 +71,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
         "aeaf9a0b61c9bbebc09309d47088e8e33c74b14d2a50344f00d0efe5620a65cc",
     );
 
-    // let con = docker.inspect_container(
-    //     "aeaf9a0b61c9bbebc09309d47088e8e33c74b14d2a50344f00d0efe5620a65cc",
-    //     Some(options),
-    // );
-
     let config = ContainerUpdateBody {
         restart_policy: Some(RestartPolicy {
             name: Some(RestartPolicyNameEnum::ALWAYS),
