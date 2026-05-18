@@ -13,3 +13,6 @@ but then i hate when i swtich project, that is start the container every time
 i either havet to run a docker update command or manule change the state
 this cli is for me to make it steam line so i just with a fo click can do it via a tui or command
 
+
+# if you se this you are going way to back and don't mid my code still
+# this is for testing and learning rust and now the ducker SDK i have no idea what im doing
