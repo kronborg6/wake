@@ -1,14 +1,12 @@
-[package]
-name = "wake-cli"
-version = "0.1.0"
-edition = "2024"
+[workspace]
+members = [
+    "apps/app",
+    "crates/core",
+    "crates/docker",
+    "crates/tui",
+    "crates/cli",
+]
 
-[dependencies]
-bollard = "0.21.0"
-color-eyre = "0.6.5"
-crossterm = "0.29.0"
-tokio = { version = "1", features = ["full"] }
-ratatui = { version = "0.30.0" }
-futures-util = "0.3"
-serde = "1.0.228"
-serde_json = "1.0.149"
+default-members = ["apps/app"]
+
+resolver = "2"

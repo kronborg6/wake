@@ -1,4 +1,3 @@
-use crate::docker_sdk::sdk::version;
 use bollard::Docker;
 use bollard::errors::Error;
 use bollard::plugin::{
@@ -6,13 +5,7 @@ use bollard::plugin::{
     RestartPolicyNameEnum,
 };
 use bollard::query_parameters::InspectContainerOptionsBuilder;
-use futures_util::stream;
-use futures_util::stream::StreamExt;
-use std::collections::HashMap;
-use std::default;
 
-mod docker_sdk;
-mod tui;
 async fn conc(arg: (Docker, &ContainerSummary)) {
     let (docker, container) = arg;
     println!(
