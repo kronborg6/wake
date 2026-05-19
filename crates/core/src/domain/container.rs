@@ -40,7 +40,7 @@ impl Container {
     pub fn name(&self) -> &String {
         &self.name
     }
-    pub fn restart_policy(self) -> ContainerRestartPolicy {
-        self.restart_policy
+    pub fn restart_policy(&self) -> &ContainerRestartPolicy {
+        &self.restart_policy
     }
 }
