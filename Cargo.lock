@@ -409,6 +409,7 @@ name = "docker"
 version = "0.1.0"
 dependencies = [
  "bollard",
+ "core",
  "futures-util",
  "serde",
  "serde_json",
