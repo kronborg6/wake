@@ -15,7 +15,7 @@ this cli is for me to make it steam line so i just with a fo click can do it via
 
 ### CodeRabbit
 
-now that im learn runst why not add CodeRabbit
+now that im learning runst why not add CodeRabbit
 i don't no if it for me but a exrta pair of eys or many gpus can't hurt
 but i not gona let it make change to my code
 that is only for me and i like it
