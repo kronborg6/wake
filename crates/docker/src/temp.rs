@@ -6,6 +6,28 @@ use bollard::plugin::{
 };
 use bollard::query_parameters::InspectContainerOptionsBuilder;
 
+/// Inspects a container and prints the full debug representation of the inspection response.
+///
+/// This helper takes a `(Docker, &ContainerSummary)` tuple, calls Docker's `inspect_container`
+/// for the container ID found in `container.id`, and prints the returned `ContainerInspectResponse`
+/// using the `{:?}` debug formatter.
+///
+/// # Panics
+///
+/// Panics if `container.id` is `None` or if the Docker inspection call returns an error (due to the use of `unwrap()`).
+///
+/// # Examples
+///
+/// ```no_run
+/// use bollard::Docker;
+/// use bollard::models::ContainerSummary;
+///
+/// async fn example() {
+///     let docker = Docker::connect_with_socket_defaults().unwrap();
+///     let container = ContainerSummary { id: Some("my-container-id".into()), ..Default::default() };
+///     conc((docker, &container)).await;
+/// }
+/// ```
 async fn conc(arg: (Docker, &ContainerSummary)) {
     let (docker, container) = arg;
     println!(
@@ -46,6 +68,26 @@ async fn conc(arg: (Docker, &ContainerSummary)) {
 // }
 //
 
+/// Inspect a container and return its detailed inspection response.
+///
+/// `id` may be a container ID or name.
+///
+/// # Returns
+///
+/// `Ok(ContainerInspectResponse)` containing the container's inspect data on success, or `Err(Error)` if the Docker API call fails.
+///
+/// # Examples
+///
+/// ```
+/// # async fn run() -> Result<(), Box<dyn std::error::Error>> {
+/// use bollard::Docker;
+/// // Create a Docker client using the platform-default socket.
+/// let docker = Docker::connect_with_socket_defaults()?;
+/// // Replace "my_container" with an actual container ID or name.
+/// let resp = get_container(&docker, "my_container").await?;
+/// println!("{}", resp.name.unwrap_or_default());
+/// # Ok(()) }
+/// ```
 async fn get_container(
     docker: &bollard::Docker,
     id: &str,
@@ -55,6 +97,22 @@ async fn get_container(
     docker.inspect_container(id, Some(options)).await
 }
 
+/// Connects to the local Docker daemon, inspects a specific container, sets its restart policy to `Always`, and re-inspects to print the restart policy before and after the update.
+///
+/// The program uses a hard-coded container ID: it prints the container's current `HostConfig.restart_policy`,
+/// updates the container's restart policy to `Always`, then re-inspects and prints the updated restart policy.
+/// Errors are reported to standard error/output.
+///
+/// # Examples
+///
+/// ```no_run
+/// // Run the compiled binary to perform the inspect-update-inspect flow against the hard-coded container.
+/// // This example is `no_run` because it requires a local Docker daemon and the specific container ID.
+/// fn main() {
+///     // Execute the program (compiled binary) rather than calling the async entry directly.
+///     // e.g., `cargo run --bin <binary-name>`
+/// }
+/// ```
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
     let docker = Docker::connect_with_socket_defaults().unwrap();
