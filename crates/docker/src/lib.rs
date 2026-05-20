@@ -1,12 +1,14 @@
 use bollard::Docker as bDocker;
 
+mod temp;
+
 use crate::{client::connect, error::DockerError};
 
 pub(crate) mod client;
-pub mod container;
+pub(crate) mod container;
 pub(crate) mod error;
 
-struct Docker {
+pub struct Docker {
     pub docker: bDocker,
 }
 
