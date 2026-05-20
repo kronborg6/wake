@@ -255,6 +255,9 @@ dependencies = [
 [[package]]
 name = "core"
 version = "0.1.0"
+dependencies = [
+ "docker",
+]
 
 [[package]]
 name = "cpufeatures"
@@ -409,7 +412,6 @@ name = "docker"
 version = "0.1.0"
 dependencies = [
  "bollard",
- "core",
  "futures-util",
  "serde",
  "serde_json",
