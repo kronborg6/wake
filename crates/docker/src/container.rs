@@ -4,15 +4,26 @@ use bollard::{Docker, plugin::ContainerSummary, query_parameters::InspectContain
 
 use crate::error::DockerError;
 
-pub async fn get_all_containers(docker: &Docker) -> Result<Vec<ContainerSummary>, DockerError> {
-    // let mut list_container_filter = HashMap::new();
-    // list_container_filter.insert(k, v)
-    //
-
-    docker
-        .list_containers(None)
-        .await
-        .map_err(|_| DockerError::ConnectionError)
+pub async fn get_all_containers(
+    docker: &Docker,
+    option: Option<HashMap<String, Vec<String>>>,
+) -> Result<Vec<ContainerSummary>, DockerError> {
+    if let Some(filter) = option {
+        docker
+            .list_containers(Some(
+                bollard::query_parameters::ListContainersOptionsBuilder::default()
+                    .all(true)
+                    .filters(&filter)
+                    .build(),
+            ))
+            .await
+            .map_err(|_| DockerError::ConnectionError)
+    } else {
+        docker
+            .list_containers(None)
+            .await
+            .map_err(|_| DockerError::ConnectionError)
+    }
 }
 
 #[cfg(test)]
