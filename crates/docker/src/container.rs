@@ -21,6 +21,10 @@ pub async fn get_all_containers(
         .map_err(|_| DockerError::ConnectionError)
 }
 
+pub async fn get_a_container(docker: &Docker) -> Option<ContainerSummary> {
+    todo!()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -28,7 +32,7 @@ mod tests {
     #[tokio::test]
     async fn test_all() {
         let docker = Docker::connect_with_local_defaults().unwrap();
-        let con = get_all_containers(&docker).await;
+        let con = get_all_containers(&docker, None).await;
 
         assert!(con.is_ok());
 

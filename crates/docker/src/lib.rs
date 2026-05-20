@@ -2,7 +2,7 @@ use bollard::Docker as bDocker;
 
 mod temp;
 
-use crate::{client::connect, error::DockerError};
+use crate::{client::connect, container::get_all_containers, error::DockerError};
 
 pub(crate) mod client;
 pub(crate) mod container;
@@ -18,5 +18,8 @@ impl Docker {
             Ok(c) => Ok(Self { docker: c }),
             Err(_) => Err(DockerError::ConnectionError),
         }
+    }
+    pub fn all_container(&self) {
+        let _ = get_all_containers(&self.docker, None);
     }
 }
