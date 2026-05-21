@@ -55,8 +55,8 @@ async fn get_container(
     docker.inspect_container(id, Some(options)).await
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
+// #[tokio::main]
+async fn maingg() -> Result<(), Box<dyn std::error::Error + 'static>> {
     let docker = Docker::connect_with_socket_defaults().unwrap();
 
     let con = get_container(
@@ -156,51 +156,51 @@ async fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
 //     }
 // }
 // #[tokio::main]
-// async fn main() -> Result<(), Box<dyn std::error::Error + 'static>> {
-//     let docker = Docker::connect_with_socket_defaults()?;
-//
-//     let options = InspectContainerOptionsBuilder::default().size(true).build();
-//     let options2 = InspectContainerOptionsBuilder::default().size(true).build();
-//
-//     let container_id = "aeaf9a0b61c9bbebc09309d47088e8e33c74b14d2a50344f00d0efe5620a65cc";
-//
-//     let config = ContainerUpdateBody {
-//         restart_policy: Some(RestartPolicy {
-//             name: Some(RestartPolicyNameEnum::ALWAYS),
-//             maximum_retry_count: None,
-//         }),
-//         ..Default::default()
-//     };
-//
-//     match docker.inspect_container(container_id, Some(options)).await {
-//         Ok(v) => {
-//             let name = v
-//                 .name
-//                 .unwrap_or_default()
-//                 .trim_start_matches('/')
-//                 .to_string();
-//
-//             println!("Container name: {}", name);
-//
-//             match docker.update_container(&name, config).await {
-//                 Ok(_) => println!("Container updated successfully"),
-//                 Err(e) => {
-//                     eprintln!("Error updating container {}: {:?}", name, e);
-//                     return Ok(());
-//                 }
-//             }
-//
-//             // Re-inspect after update
-//             let updated = docker.inspect_container(&name, Some(options2)).await?;
-//
-//             println!(
-//                 "{}",
-//                 serde_json::to_string_pretty(&updated.host_config.unwrap().restart_policy)?
-//             );
-//         }
-//
-//         Err(e) => println!("error: {:?}", e),
-//     }
-//
-//     Ok(())
-// }
+async fn main_temp() -> Result<(), Box<dyn std::error::Error + 'static>> {
+    let docker = Docker::connect_with_socket_defaults()?;
+
+    let options = InspectContainerOptionsBuilder::default().size(true).build();
+    let options2 = InspectContainerOptionsBuilder::default().size(true).build();
+
+    let container_id = "aeaf9a0b61c9bbebc09309d47088e8e33c74b14d2a50344f00d0efe5620a65cc";
+
+    let config = ContainerUpdateBody {
+        restart_policy: Some(RestartPolicy {
+            name: Some(RestartPolicyNameEnum::ALWAYS),
+            maximum_retry_count: None,
+        }),
+        ..Default::default()
+    };
+
+    match docker.inspect_container(container_id, Some(options)).await {
+        Ok(v) => {
+            let name = v
+                .name
+                .unwrap_or_default()
+                .trim_start_matches('/')
+                .to_string();
+
+            println!("Container name: {}", name);
+
+            match docker.update_container(&name, config).await {
+                Ok(_) => println!("Container updated successfully"),
+                Err(e) => {
+                    eprintln!("Error updating container {}: {:?}", name, e);
+                    return Ok(());
+                }
+            }
+
+            // Re-inspect after update
+            let updated = docker.inspect_container(&name, Some(options2)).await?;
+
+            println!(
+                "{}",
+                serde_json::to_string_pretty(&updated.host_config.unwrap().restart_policy)?
+            );
+        }
+
+        Err(e) => println!("error: {:?}", e),
+    }
+
+    Ok(())
+}

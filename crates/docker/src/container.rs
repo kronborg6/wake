@@ -1,13 +1,15 @@
 use std::collections::HashMap;
 
 use bollard::{Docker, plugin::ContainerSummary, query_parameters::InspectContainerOptions};
+use common::domain::container::Container;
+use common::error::container::ContainerError;
 
 use crate::error::DockerError;
 
 pub async fn get_all_containers(
     docker: &Docker,
     option: Option<HashMap<String, Vec<String>>>,
-) -> Result<Vec<ContainerSummary>, DockerError> {
+) -> Result<Vec<Container>, ContainerError> {
     let option = option.map(|filter| {
         bollard::query_parameters::ListContainersOptionsBuilder::default()
             .all(true)
@@ -15,14 +17,34 @@ pub async fn get_all_containers(
             .build()
     });
 
-    docker
-        .list_containers(option)
-        .await
-        .map_err(|_| DockerError::ConnectionError)
+    match docker.list_containers(option).await {
+        Ok(v) => v
+            .into_iter()
+            .map(|s| DockerContainerSummary(s).try_into())
+            .collect(),
+        Err(_) => Err(ContainerError::CreateionError),
+    }
+
+    // docker
+    //     .list_containers(option)
+    //     .await
+    //     .map_err(|_| DockerError::ConnectionError)
 }
 
 pub async fn get_a_container(docker: &Docker) -> Option<ContainerSummary> {
     todo!()
+}
+
+pub struct DockerContainerSummary(pub ContainerSummary);
+
+impl TryInto<Container> for DockerContainerSummary {
+    type Error = ContainerError;
+    fn try_into(self) -> Result<Container, Self::Error> {
+        Ok(Container {
+            id: self.0.id.ok_or(ContainerError::MissingId)?,
+            name: self.0.names.unwrap_or(vec![]),
+        })
+    }
 }
 
 #[cfg(test)]

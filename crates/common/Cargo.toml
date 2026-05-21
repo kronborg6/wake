@@ -1,14 +1,8 @@
 [package]
-name = "docker"
+name = "common"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-bollard = "0.21.0"
-serde = "1.0.228"
-serde_json = "1.0.149"
-futures-util = "0.3"
 tokio = { version = "1", features = ["full"] }
 async-trait = "0.1"
-common = {path = "../common"}
-

@@ -4,7 +4,9 @@ version = "0.0.1"
 edition = "2024"
 
 [dependencies]
-core = { path = "../../crates/core" }
+common = { path = "../../crates/common" }
 docker = { path = "../../crates/docker" }
 cli = { path = "../../crates/cli" }
 tui = { path = "../../crates/tui" }
+
+tokio = { version = "1", features = ["full"] }
