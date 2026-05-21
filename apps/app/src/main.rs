@@ -1,9 +1,9 @@
 use common::service::container::ContainerService;
-use docker::DockerAPI;
+use docker::DockerRuntime;
 
 #[tokio::main]
 async fn main() {
-    let runtime = DockerAPI::new().unwrap();
+    let runtime = DockerRuntime::new().unwrap();
 
     let service = ContainerService::new(runtime);
 
