@@ -17,18 +17,22 @@ pub async fn get_all_containers(
             .build()
     });
 
-    match docker.list_containers(option).await {
+    match docker
+        .list_containers(
+            option.or(Some(
+                bollard::query_parameters::ListContainersOptionsBuilder::new()
+                    .all(true)
+                    .build(),
+            )),
+        )
+        .await
+    {
         Ok(v) => v
             .into_iter()
             .map(|s| DockerContainerSummary(s).try_into())
             .collect(),
         Err(_) => Err(ContainerError::CreateionError),
     }
-
-    // docker
-    //     .list_containers(option)
-    //     .await
-    //     .map_err(|_| DockerError::ConnectionError)
 }
 
 pub async fn get_a_container(docker: &Docker) -> Option<ContainerSummary> {
