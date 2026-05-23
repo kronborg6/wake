@@ -1,12 +1,36 @@
-use crate::{domain::container::Container, error::container::ContainerError};
-use async_trait::async_trait;
+use std::pin::Pin;
 
-#[async_trait]
+use crate::{domain::container::Container, error::container::ContainerError};
+// use async_trait::async_trait;
+
+// #[async_trait] Result<Vec<Container>, ContainerError>
 pub trait ContainerRuntime {
-    async fn containers(&self) -> Result<Vec<Container>, ContainerError>;
-    async fn get(&self, locator: &str) -> Result<Option<Container>, ()>;
-    async fn update_restart_policy(&self, locator: &str) -> Result<Option<Container>, ()>;
-    async fn update_state(&self, locator: &str) -> Result<Option<Container>, ()>;
-    async fn shoutdown(&self, locator: &str) -> Result<bool, ()>;
-    // async fn containers(&self) -> Result<Vec<Container>, ()>;
+    fn containers<'service, 'future>(
+        &'service self,
+    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Sync + Send + 'future>>
+    where
+        'service: 'future;
+
+    fn get<'service, 'locator, 'future>(
+        &'service self,
+        locator: &'locator str,
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'future>>
+    where
+        'service: 'future,
+        'locator: 'future,
+        Self: 'future;
+
+    fn update_restart_policy<'a>(
+        &'a self,
+        locator: &'a str,
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'a>>;
+
+    fn update_state<'a>(
+        &'a self,
+        locator: &'a str,
+    ) -> Pin<Box<dyn Future<Output = Result<Container, ()>> + Send + 'a>>;
+    fn shoutdown<'a>(
+        &'a self,
+        locator: &'a str,
+    ) -> Pin<Box<dyn Future<Output = Result<Option<bool>, ()>> + Send + 'a>>;
 }

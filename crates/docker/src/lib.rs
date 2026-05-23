@@ -30,6 +30,9 @@ impl ContainerRuntime for DockerRuntime {
         get_all_containers(&self.docker, None).await
     }
     async fn get(&self, locator: &str) -> Result<Option<Container>, ()> {
+        if locator.is_empty() {
+            return Err(());
+        }
         todo!()
     }
     async fn update_restart_policy(&self, locator: &str) -> Result<Option<Container>, ()> {
