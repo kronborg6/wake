@@ -2,6 +2,7 @@ use crate::{
     domain::container::Container, error::container::ContainerError,
     port::container::ContainerRuntime,
 };
+use std::pin::Pin;
 
 pub struct ContainerService<R>
 where
@@ -12,42 +13,76 @@ where
 
 impl<R> ContainerService<R>
 where
-    R: ContainerRuntime,
+    R: ContainerRuntime + std::marker::Sync,
 {
     pub fn new(runtime: R) -> Self {
         Self { runtime }
     }
-    pub async fn containers(&self) -> Result<Vec<Container>, ContainerError> {
-        self.runtime.containers().await
+    pub fn containers<'service, 'future>(
+        &'service self,
+    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Sync + Send + 'future>>
+    where
+        'service: 'future,
+    {
+        Box::pin(async move { self.runtime.containers().await })
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use async_trait::async_trait;
 
     use super::*;
+    use std::pin::Pin;
 
     struct MockRuntime;
 
-    #[async_trait]
     impl ContainerRuntime for MockRuntime {
-        async fn containers(&self) -> Result<Vec<Container>, ContainerError> {
-            Ok(vec![])
+        fn containers<'service, 'future>(
+            &'service self,
+        ) -> Pin<
+            Box<
+                dyn Future<Output = Result<Vec<Container>, ContainerError>> + Sync + Send + 'future,
+            >,
+        >
+        where
+            'service: 'future,
+        {
+            Box::pin(async move { Ok(vec![]) })
         }
-        async fn get(&self, locator: &str) -> Result<Option<Container>, ()> {
-            if locator.is_empty() {
-                return Err(());
-            }
-            Ok(None)
+
+        fn get<'service, 'locator, 'future>(
+            &'service self,
+            locator: &'locator str,
+        ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'future>>
+        where
+            'service: 'future,
+            'locator: 'future,
+            Self: 'future,
+        {
+            Box::pin(async move {
+                if locator.is_empty() {
+                    return Err(());
+                }
+                Ok(None)
+            })
         }
-        async fn update_restart_policy(&self, locator: &str) -> Result<Option<Container>, ()> {
+        fn update_restart_policy<'a>(
+            &'a self,
+            locator: &'a str,
+        ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'a>> {
             todo!()
         }
-        async fn update_state(&self, locator: &str) -> Result<Option<Container>, ()> {
+        fn update_state<'a>(
+            &'a self,
+            locator: &'a str,
+        ) -> Pin<Box<dyn Future<Output = Result<Container, ()>> + Send + 'a>> {
             todo!()
         }
-        async fn shoutdown(&self, locator: &str) -> Result<bool, ()> {
+
+        fn shoutdown<'a>(
+            &'a self,
+            locator: &'a str,
+        ) -> Pin<Box<dyn Future<Output = Result<Option<bool>, ()>> + Send + 'a>> {
             todo!()
         }
     }

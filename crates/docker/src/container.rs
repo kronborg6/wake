@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use bollard::plugin::ContainerInspectResponse;
+use bollard::query_parameters::InspectContainerOptionsBuilder;
 use bollard::{Docker, plugin::ContainerSummary, query_parameters::InspectContainerOptions};
 use common::domain::container::Container;
 use common::error::container::ContainerError;
@@ -35,7 +37,16 @@ pub async fn get_all_containers(
     }
 }
 
-pub async fn get_a_container(docker: &Docker) -> Option<ContainerSummary> {
+pub async fn get_a_container(docker: &Docker, locator: &str) -> Option<ContainerInspectResponse> {
+    let option = InspectContainerOptionsBuilder::default().size(true).build();
+
+    docker.inspect_container(locator, Some(option)).await.ok()
+}
+
+pub async fn update_container_restart_police(
+    docker: &Docker,
+    locator: &str,
+) -> Result<ContainerInspectResponse, ContainerError> {
     todo!()
 }
 
