@@ -2,25 +2,25 @@ use crate::{
     domain::container::Container, error::container::ContainerError,
     port::container::ContainerRuntime,
 };
-use std::pin::Pin;
+use std::{pin::Pin, sync::Arc};
 
 pub struct ContainerService<R>
 where
     R: ContainerRuntime,
 {
-    runtime: R,
+    runtime: Arc<R>,
 }
 
 impl<R> ContainerService<R>
 where
-    R: ContainerRuntime + std::marker::Sync,
+    R: ContainerRuntime + std::marker::Sync + std::marker::Send,
 {
-    pub fn new(runtime: R) -> Self {
+    pub fn new(runtime: Arc<R>) -> Self {
         Self { runtime }
     }
     pub fn containers<'service, 'future>(
         &'service self,
-    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Sync + Send + 'future>>
+    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Send + 'future>>
     where
         'service: 'future,
     {
@@ -39,11 +39,7 @@ mod tests {
     impl ContainerRuntime for MockRuntime {
         fn containers<'service, 'future>(
             &'service self,
-        ) -> Pin<
-            Box<
-                dyn Future<Output = Result<Vec<Container>, ContainerError>> + Sync + Send + 'future,
-            >,
-        >
+        ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Send + 'future>>
         where
             'service: 'future,
         {
