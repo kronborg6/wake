@@ -1,9 +1,11 @@
+use std::sync::Arc;
+
 use common::service::container::ContainerService;
 use docker::DockerRuntime;
 
 #[tokio::main]
 async fn main() {
-    let runtime = DockerRuntime::new().unwrap();
+    let runtime = Arc::new(DockerRuntime::new().unwrap());
 
     let service = ContainerService::new(runtime);
 
