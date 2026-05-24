@@ -1,3 +1,6 @@
+use std::pin::Pin;
+use std::process::Output;
+
 use async_trait::async_trait;
 use bollard::Docker as bDocker;
 use common::port::container::ContainerRuntime;
@@ -24,24 +27,48 @@ impl DockerRuntime {
     }
 }
 
-#[async_trait]
+// #[async_trait]
 impl ContainerRuntime for DockerRuntime {
-    async fn containers(&self) -> Result<Vec<Container>, ContainerError> {
-        get_all_containers(&self.docker, None).await
+    fn containers<'service, 'future>(
+        &'service self,
+    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Send + 'future>>
+    where
+        'service: 'future,
+    {
+        Box::pin(async move { get_all_containers(&self.docker, None).await })
     }
-    async fn get(&self, locator: &str) -> Result<Option<Container>, ()> {
-        if locator.is_empty() {
-            return Err(());
-        }
+    fn get<'service, 'locator, 'future>(
+        &'service self,
+        locator: &'locator str,
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'future>>
+    where
+        'service: 'future,
+        'locator: 'future,
+        Self: 'future,
+    {
+        Box::pin(async move {
+            if locator.is_empty() {
+                return Err(());
+            }
+            todo!()
+        })
+    }
+    fn update_restart_policy<'a>(
+        &'a self,
+        locator: &'a str,
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'a>> {
         todo!()
     }
-    async fn update_restart_policy(&self, locator: &str) -> Result<Option<Container>, ()> {
+    fn update_state<'a>(
+        &'a self,
+        locator: &'a str,
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'a>> {
         todo!()
     }
-    async fn update_state(&self, locator: &str) -> Result<Option<Container>, ()> {
-        todo!()
-    }
-    async fn shoutdown(&self, locator: &str) -> Result<bool, ()> {
+    fn shoutdown<'a>(
+        &'a self,
+        locator: &'a str,
+    ) -> Pin<Box<dyn Future<Output = Result<bool, ()>> + Send + 'a>> {
         todo!()
     }
 }

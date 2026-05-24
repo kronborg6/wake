@@ -7,7 +7,7 @@ use crate::{domain::container::Container, error::container::ContainerError};
 pub trait ContainerRuntime {
     fn containers<'service, 'future>(
         &'service self,
-    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Sync + Send + 'future>>
+    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Send + 'future>>
     where
         'service: 'future;
 
@@ -28,9 +28,9 @@ pub trait ContainerRuntime {
     fn update_state<'a>(
         &'a self,
         locator: &'a str,
-    ) -> Pin<Box<dyn Future<Output = Result<Container, ()>> + Send + 'a>>;
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'a>>;
     fn shoutdown<'a>(
         &'a self,
         locator: &'a str,
-    ) -> Pin<Box<dyn Future<Output = Result<Option<bool>, ()>> + Send + 'a>>;
+    ) -> Pin<Box<dyn Future<Output = Result<bool, ()>> + Send + 'a>>;
 }
