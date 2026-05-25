@@ -8,30 +8,30 @@ pub struct ContainerService<R>
 where
     R: ContainerRuntime,
 {
-    runtime: Arc<R>,
+    client: Arc<R>,
 }
 
 impl<R> ContainerService<R>
 where
     R: ContainerRuntime + std::marker::Sync + std::marker::Send,
 {
-    pub fn new(runtime: Arc<R>) -> Self {
-        Self { runtime }
+    pub fn new(client: Arc<R>) -> Self {
+        Self { client }
     }
-    pub fn containers<'service, 'future>(
+    pub fn list<'service, 'future>(
         &'service self,
     ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Send + 'future>>
     where
         'service: 'future,
     {
         Box::pin(async move {
-            self.runtime
+            self.client
                 .containers(None)
                 .await
                 .map_err(|error| ContainerError::FetchingError(error.to_string()))
         })
     }
-    pub fn get<'service, 'locator, 'future>(
+    pub fn find<'service, 'locator, 'future>(
         &'service self,
         locator: &'locator str,
     ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ContainerError>> + Send + 'future>>
@@ -44,7 +44,7 @@ where
             if locator.is_empty() {
                 return Err(ContainerError::InvaldeLocator);
             }
-            self.runtime
+            self.client
                 .get(locator)
                 .await
                 .map_err(|error| ContainerError::FetchingError(error.to_string()))
@@ -123,7 +123,7 @@ mod tests {
     async fn get_by_vailed_locator() {
         let service = service();
 
-        let result = service.get("ASGLK").await;
+        let result = service.find("ASGLK").await;
 
         assert!(result.is_ok());
     }
@@ -131,7 +131,7 @@ mod tests {
     async fn get_by_invailed_locator() {
         let service = service();
 
-        let result = service.runtime.get("").await;
+        let result = service.find("").await;
 
         assert!(result.is_err());
     }
@@ -139,7 +139,7 @@ mod tests {
     async fn container() {
         let service = service();
 
-        let result = service.runtime.containers(None).await;
+        let result = service.list().await;
 
         assert!(result.is_ok());
     }
