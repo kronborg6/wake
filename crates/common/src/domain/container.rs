@@ -2,11 +2,23 @@ use crate::error::container::{self, ContainerError};
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum ContainerRestartPolicy {
-    EMPTY,
-    NO,
-    ALWAYS,
-    UNLESS_STOPPED,
-    ON_FAILURE,
+    Empty,
+    No,
+    Always,
+    UnlessStopped,
+    OnFailure,
+}
+
+impl ContainerRestartPolicy {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            ContainerRestartPolicy::Empty => "",
+            ContainerRestartPolicy::No => "no",
+            ContainerRestartPolicy::Always => "always",
+            ContainerRestartPolicy::UnlessStopped => "unless-stopped",
+            ContainerRestartPolicy::OnFailure => "on-failure",
+        }
+    }
 }
 #[derive(Debug, PartialEq, Eq)]
 pub struct Container {

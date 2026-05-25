@@ -11,7 +11,7 @@ use crate::container::mapper::DockerContainerSummary;
 
 pub async fn get_all_containers(
     docker: &Docker,
-    option: Option<HashMap<String, Vec<String>>>,
+    option: Option<&HashMap<String, Vec<String>>>,
 ) -> Result<Vec<Container>, ContainerError> {
     let option = option.map(|filter| {
         bollard::query_parameters::ListContainersOptionsBuilder::default()

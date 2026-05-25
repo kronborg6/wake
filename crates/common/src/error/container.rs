@@ -8,4 +8,6 @@ pub enum ContainerError {
     MissingId,
     #[error("invalid email address: ")]
     InvaldeLocator,
+    #[error("failed to fetch containers: {0}")]
+    FetchingError(String),
 }

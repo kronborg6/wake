@@ -9,7 +9,7 @@ async fn main() {
 
     let service = ContainerService::new(runtime);
 
-    let containers = service.containers().await.unwrap();
+    let containers = service.list().await.unwrap();
 
     println!("{:?}", containers);
 }
