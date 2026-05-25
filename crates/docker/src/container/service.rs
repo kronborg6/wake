@@ -1,8 +1,12 @@
 use bollard::Docker as bDocker;
+use common::domain::container::ContainerRestartPolicy;
+use common::error::runtime::RuntimeError;
 use common::port::container::ContainerRuntime;
 use common::{domain::container::Container, error::container::ContainerError};
 
+use crate::container::update::update_container_restart_police;
 use crate::{client::connect, error::DockerError};
+use std::collections::HashMap;
 use std::pin::Pin;
 
 use crate::container::list::get_all_containers;
@@ -21,46 +25,56 @@ impl DockerRuntime {
 }
 
 impl ContainerRuntime for DockerRuntime {
-    fn containers<'service, 'future>(
+    fn containers<'service, 'filter, 'future>(
         &'service self,
-    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, ContainerError>> + Send + 'future>>
+        filter: Option<HashMap<String, Vec<String>>>,
+    ) -> Pin<Box<dyn Future<Output = Result<Vec<Container>, RuntimeError>> + Send + 'future>>
     where
         'service: 'future,
     {
-        Box::pin(async move { get_all_containers(&self.docker, None).await })
+        Box::pin(async move {
+            get_all_containers(&self.docker, filter.as_ref())
+                .await
+                .map_err(|e| RuntimeError::Internal(e.to_string()))
+        })
     }
     fn get<'service, 'locator, 'future>(
         &'service self,
         locator: &'locator str,
-    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'future>>
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, RuntimeError>> + Send + 'future>>
     where
         'service: 'future,
         'locator: 'future,
         Self: 'future,
     {
-        Box::pin(async move {
-            if locator.is_empty() {
-                return Err(());
-            }
-            todo!()
-        })
+        Box::pin(async move { todo!() })
     }
     fn update_restart_policy<'a>(
         &'a self,
         locator: &'a str,
-    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'a>> {
-        todo!()
+        status: &'a ContainerRestartPolicy,
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, RuntimeError>> + Send + 'a>> {
+        Box::pin(async move {
+            match update_container_restart_police(&self.docker, locator, status.as_str()).await {
+                Ok(o) => {
+                    let container: Container =
+                        o.try_into().map_err(|_| RuntimeError::ContainerNotFound)?;
+                    Ok(Some(container))
+                }
+                Err(e) => Err(RuntimeError::Internal(e.to_string())),
+            }
+        })
     }
     fn update_state<'a>(
         &'a self,
         locator: &'a str,
-    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, ()>> + Send + 'a>> {
+    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, RuntimeError>> + Send + 'a>> {
         todo!()
     }
     fn shoutdown<'a>(
         &'a self,
         locator: &'a str,
-    ) -> Pin<Box<dyn Future<Output = Result<bool, ()>> + Send + 'a>> {
+    ) -> Pin<Box<dyn Future<Output = Result<bool, RuntimeError>> + Send + 'a>> {
         todo!()
     }
 }

@@ -1,8 +1,9 @@
 use crate::{
-    domain::container::Container, error::container::ContainerError,
+    domain::container::{Container, ContainerRestartPolicy},
+    error::container::ContainerError,
     port::container::ContainerRuntime,
 };
-use std::{pin::Pin, sync::Arc};
+use std::{pin::Pin, process::Output, sync::Arc};
 
 pub struct ContainerService<R>
 where
@@ -49,6 +50,12 @@ where
                 .await
                 .map_err(|error| ContainerError::FetchingError(error.to_string()))
         })
+    }
+    pub fn update_restart_policy<'a>(
+        &'a self,
+        status: &'a ContainerRestartPolicy,
+    ) -> Pin<Box<dyn Future<Output = Result<Container, ContainerError>> + Send + 'a>> {
+        todo!()
     }
 }
 
@@ -115,7 +122,7 @@ mod tests {
     async fn get_by_emty_name() {
         let service = service();
 
-        let result = service.get("").await;
+        let result = service.find("").await;
 
         assert!(result.is_err());
     }
