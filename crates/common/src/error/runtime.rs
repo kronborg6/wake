@@ -6,4 +6,6 @@ pub enum RuntimeError {
     ConcationFailed(String),
     #[error("intanaly run time error: {0}")]
     Internal(String),
+    #[error("failed to map to container")]
+    MapError,
 }

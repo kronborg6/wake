@@ -3,13 +3,15 @@ use common::domain::container::ContainerRestartPolicy;
 use common::error::runtime::RuntimeError;
 use common::port::container::ContainerRuntime;
 use common::{domain::container::Container, error::container::ContainerError};
+use futures_util::future::ok;
 
+use crate::container::mapper::ContainerInspectResponseSummary;
 use crate::container::update::update_container_restart_police;
 use crate::{client::connect, error::DockerError};
 use std::collections::HashMap;
 use std::pin::Pin;
 
-use crate::container::list::get_all_containers;
+use crate::container::list::{get_a_container, get_all_containers};
 #[derive(Debug)]
 pub struct DockerRuntime {
     pub docker: bDocker,
@@ -47,7 +49,18 @@ impl ContainerRuntime for DockerRuntime {
         'locator: 'future,
         Self: 'future,
     {
-        Box::pin(async move { todo!() })
+        Box::pin(async move {
+            match get_a_container(&self.docker, locator).await {
+                Ok(o) => {
+                    let container: Container = ContainerInspectResponseSummary(o)
+                        .try_into()
+                        .map_err(|_| RuntimeError::MapError)?;
+
+                    Ok(Some(container))
+                }
+                Err(e) => Err(RuntimeError::Internal(e.to_string())),
+            }
+        })
     }
     fn update_restart_policy<'a>(
         &'a self,
@@ -57,8 +70,7 @@ impl ContainerRuntime for DockerRuntime {
         Box::pin(async move {
             match update_container_restart_police(&self.docker, locator, status.as_str()).await {
                 Ok(o) => {
-                    let container: Container =
-                        o.try_into().map_err(|_| RuntimeError::ContainerNotFound)?;
+                    let container: Container = o.try_into().map_err(|_| RuntimeError::MapError)?;
                     Ok(Some(container))
                 }
                 Err(e) => Err(RuntimeError::Internal(e.to_string())),
