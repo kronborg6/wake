@@ -7,7 +7,7 @@ use common::domain::container::Container;
 
 use common::error::container::ContainerError;
 
-use crate::container::mapper::DockerContainerSummary;
+use crate::container::mapper::{ContainerInspectResponseSummary, DockerContainerSummary};
 
 pub async fn get_all_containers(
     docker: &Docker,
@@ -38,8 +38,16 @@ pub async fn get_all_containers(
     }
 }
 
-pub async fn get_a_container(docker: &Docker, locator: &str) -> Option<ContainerInspectResponse> {
+pub async fn get_a_container(
+    docker: &Docker,
+    locator: &str,
+) -> Result<ContainerInspectResponse, ContainerError> {
     let option = InspectContainerOptionsBuilder::default().size(true).build();
 
-    docker.inspect_container(locator, Some(option)).await.ok()
+    match docker.inspect_container(locator, Some(option)).await {
+        Ok(o) => Ok(o),
+        Err(e) => Err(ContainerError::FetchingError(e.to_string())),
+    }
+
+    // ContainerInspectResponseSummary(container).try_into()
 }

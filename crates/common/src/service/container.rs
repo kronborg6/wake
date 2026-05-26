@@ -53,6 +53,7 @@ where
     }
     pub fn update_restart_policy<'a>(
         &'a self,
+        locator: &'a str,
         status: &'a ContainerRestartPolicy,
     ) -> Pin<Box<dyn Future<Output = Result<Container, ContainerError>> + Send + 'a>> {
         todo!()
@@ -94,6 +95,7 @@ mod tests {
         fn update_restart_policy<'a>(
             &'a self,
             _locator: &'a str,
+            status: &'a ContainerRestartPolicy,
         ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, RuntimeError>> + Send + 'a>>
         {
             todo!()

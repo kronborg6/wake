@@ -2,6 +2,7 @@ use bollard::plugin::{ContainerInspectResponse, ContainerSummary};
 use common::{domain::container::Container, error::container::ContainerError};
 
 pub struct DockerContainerSummary(pub ContainerSummary);
+
 pub struct ContainerInspectResponseSummary(pub ContainerInspectResponse);
 
 impl TryInto<Container> for DockerContainerSummary {
