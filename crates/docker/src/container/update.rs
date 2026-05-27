@@ -1,16 +1,16 @@
 use std::str::FromStr;
 
+use crate::container::mapper::ContainerInspectResponseSummary;
+use anyhow::{Context, Ok};
+use bollard::Docker;
 use bollard::plugin::{ContainerUpdateBody, RestartPolicy, RestartPolicyNameEnum};
 use bollard::query_parameters::InspectContainerOptionsBuilder;
-use bollard::{Docker, plugin::ContainerInspectResponse};
-use common::error::container::ContainerError;
 
-use crate::container::mapper::ContainerInspectResponseSummary;
 pub async fn update_container_restart_police(
     docker: &Docker,
     locator: &str,
     new_status: &str,
-) -> Result<ContainerInspectResponseSummary, ContainerError> {
+) -> anyhow::Result<ContainerInspectResponseSummary> {
     let config = ContainerUpdateBody {
         restart_policy: Some(RestartPolicy {
             name: Some(
@@ -21,22 +21,18 @@ pub async fn update_container_restart_police(
         ..Default::default()
     };
 
-    match docker.update_container(locator, config).await {
-        Ok(_) => {
-            match docker
-                .inspect_container(
-                    locator,
-                    Some(InspectContainerOptionsBuilder::default().size(true).build()),
-                )
-                .await
-            {
-                Ok(u) => Ok(ContainerInspectResponseSummary(u)),
-                Err(e) => Err(ContainerError::FetchingError(e.to_string())),
-            }
-        }
-        Err(e) => {
-            eprintln!("Error updating container {}: {:?}", locator, e);
-            Err(ContainerError::FetchingError(e.to_string()))
-        }
-    }
+    docker
+        .update_container(locator, config)
+        .await
+        .context("failed to update container restart status")?;
+
+    let updated_container = docker
+        .inspect_container(
+            locator,
+            Some(InspectContainerOptionsBuilder::default().size(true).build()),
+        )
+        .await
+        .context("failed to fetched updated container")?;
+
+    Ok(ContainerInspectResponseSummary(updated_container))
 }
