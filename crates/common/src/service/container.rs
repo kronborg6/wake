@@ -3,7 +3,7 @@ use crate::{
     error::container::ContainerError,
     port::container::ContainerRuntime,
 };
-use std::{pin::Pin, process::Output, sync::Arc};
+use std::{pin::Pin, sync::Arc};
 
 pub struct ContainerService<R>
 where
@@ -64,9 +64,9 @@ where
                 .client
                 .update_restart_policy(locator, status)
                 .await
-                .unwrap();
+                .map_err(|_| ContainerError::CreateionError)?;
 
-            Ok(container.unwrap())
+            Ok(container)
         })
     }
 }

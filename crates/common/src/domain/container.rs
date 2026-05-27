@@ -1,5 +1,3 @@
-use crate::error::container::{self, ContainerError};
-
 #[derive(Debug, PartialEq, Eq)]
 pub enum ContainerRestartPolicy {
     Empty,

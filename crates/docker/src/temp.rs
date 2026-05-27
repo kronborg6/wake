@@ -6,6 +6,7 @@ use bollard::plugin::{
 };
 use bollard::query_parameters::InspectContainerOptionsBuilder;
 
+#[allow(dead_code)]
 async fn conc(arg: (Docker, &ContainerSummary)) {
     let (docker, container) = arg;
     println!(
@@ -46,6 +47,7 @@ async fn conc(arg: (Docker, &ContainerSummary)) {
 // }
 //
 
+#[allow(dead_code)]
 async fn get_container(
     docker: &bollard::Docker,
     id: &str,
@@ -56,6 +58,7 @@ async fn get_container(
 }
 
 // #[tokio::main]
+#[allow(dead_code)]
 async fn maingg() -> Result<(), Box<dyn std::error::Error + 'static>> {
     let docker = Docker::connect_with_socket_defaults().unwrap();
 
@@ -156,6 +159,7 @@ async fn maingg() -> Result<(), Box<dyn std::error::Error + 'static>> {
 //     }
 // }
 // #[tokio::main]
+#[allow(dead_code)]
 async fn main_temp() -> Result<(), Box<dyn std::error::Error + 'static>> {
     let docker = Docker::connect_with_socket_defaults()?;
 
