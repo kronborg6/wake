@@ -56,7 +56,18 @@ where
         locator: &'a str,
         status: &'a ContainerRestartPolicy,
     ) -> Pin<Box<dyn Future<Output = Result<Container, ContainerError>> + Send + 'a>> {
-        todo!()
+        Box::pin(async move {
+            if locator.is_empty() {
+                return Err(ContainerError::InvaldeLocator);
+            }
+            let container = self
+                .client
+                .update_restart_policy(locator, status)
+                .await
+                .unwrap();
+
+            Ok(container.unwrap())
+        })
     }
 }
 

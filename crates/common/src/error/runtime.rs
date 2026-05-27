@@ -4,8 +4,8 @@ pub enum RuntimeError {
     ContainerNotFound,
     #[error("conection failed with {0}")]
     ConcationFailed(String),
-    #[error("intanaly run time error: {0}")]
-    Internal(String),
+    #[error("intanaly run time error")]
+    Internal,
     #[error("failed to map to container")]
     MapError,
 }

@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use common::service::container::ContainerService;
+use common::{domain::container::ContainerRestartPolicy, service::container::ContainerService};
 use docker::DockerRuntime;
 
 #[tokio::main]
@@ -12,4 +12,14 @@ async fn main() {
     let containers = service.list().await.unwrap();
 
     println!("{:?}", containers);
+
+    let updated = service
+        .update_restart_policy(
+            "aeaf9a0b61c9bbebc09309d47088e8e33c74b14d2a50344f00d0efe5620a65cc",
+            &ContainerRestartPolicy::Always,
+        )
+        .await
+        .unwrap();
+
+    println!("{:?}", updated);
 }

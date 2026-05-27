@@ -37,7 +37,10 @@ impl ContainerRuntime for DockerRuntime {
         Box::pin(async move {
             get_all_containers(&self.docker, filter.as_ref())
                 .await
-                .map_err(|e| RuntimeError::Internal(e.to_string()))
+                .map_err(|e| {
+                    tracing::error!(error = ?e);
+                    RuntimeError::Internal
+                })
         })
     }
     fn get<'service, 'locator, 'future>(
@@ -58,7 +61,10 @@ impl ContainerRuntime for DockerRuntime {
 
                     Ok(Some(container))
                 }
-                Err(e) => Err(RuntimeError::Internal(e.to_string())),
+                Err(e) => {
+                    tracing::error!(error = ?e);
+                    Err(RuntimeError::Internal)
+                }
             }
         })
     }
@@ -70,10 +76,20 @@ impl ContainerRuntime for DockerRuntime {
         Box::pin(async move {
             match update_container_restart_police(&self.docker, locator, status.as_str()).await {
                 Ok(o) => {
-                    let container: Container = o.try_into().map_err(|_| RuntimeError::MapError)?;
+                    let container: Container = o.try_into().map_err(|e| {
+                        tracing::error!(error = ?e,
+                        locator = locator,
+                        "failed to updated restart polacy");
+                        RuntimeError::MapError
+                    })?;
                     Ok(Some(container))
                 }
-                Err(e) => Err(RuntimeError::Internal(e.to_string())),
+                Err(e) => {
+                    tracing::error!(error = ?e,
+                        locator = locator,
+                        "failed to map locator");
+                    Err(RuntimeError::Internal)
+                }
             }
         })
     }

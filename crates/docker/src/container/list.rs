@@ -1,5 +1,7 @@
 use std::collections::HashMap;
+use std::fmt::Error;
 
+use anyhow::Context;
 use bollard::plugin::ContainerInspectResponse;
 use bollard::query_parameters::InspectContainerOptionsBuilder;
 use bollard::{Docker, plugin::ContainerSummary};
@@ -12,11 +14,11 @@ use crate::container::mapper::{ContainerInspectResponseSummary, DockerContainerS
 pub async fn get_all_containers(
     docker: &Docker,
     option: Option<&HashMap<String, Vec<String>>>,
-) -> Result<Vec<Container>, ContainerError> {
+) -> anyhow::Result<Vec<Container>> {
     let option = option.map(|filter| {
         bollard::query_parameters::ListContainersOptionsBuilder::default()
             .all(true)
-            .filters(&filter)
+            .filters(filter)
             .build()
     });
 
@@ -32,22 +34,24 @@ pub async fn get_all_containers(
     {
         Ok(v) => v
             .into_iter()
-            .map(|s| DockerContainerSummary(s).try_into())
+            .map(|s| {
+                DockerContainerSummary(s)
+                    .try_into()
+                    .context("failed to convonte to DockerContainer")
+            })
             .collect(),
-        Err(_) => Err(ContainerError::CreateionError),
+        Err(e) => Err(anyhow::Error::new(e).context("failed to get list of containers")),
     }
 }
 
 pub async fn get_a_container(
     docker: &Docker,
     locator: &str,
-) -> Result<ContainerInspectResponse, ContainerError> {
+) -> anyhow::Result<ContainerInspectResponse> {
     let option = InspectContainerOptionsBuilder::default().size(true).build();
 
-    match docker.inspect_container(locator, Some(option)).await {
-        Ok(o) => Ok(o),
-        Err(e) => Err(ContainerError::FetchingError(e.to_string())),
-    }
-
-    // ContainerInspectResponseSummary(container).try_into()
+    docker
+        .inspect_container(locator, Some(option))
+        .await
+        .context("failed to get container")
 }
