@@ -1,15 +1,12 @@
 use std::collections::HashMap;
-use std::fmt::Error;
 
 use anyhow::Context;
+use bollard::Docker;
 use bollard::plugin::ContainerInspectResponse;
 use bollard::query_parameters::InspectContainerOptionsBuilder;
-use bollard::{Docker, plugin::ContainerSummary};
 use common::domain::container::Container;
 
-use common::error::container::ContainerError;
-
-use crate::container::mapper::{ContainerInspectResponseSummary, DockerContainerSummary};
+use crate::container::mapper::DockerContainerSummary;
 
 pub async fn get_all_containers(
     docker: &Docker,

@@ -1,9 +1,8 @@
 use bollard::Docker as bDocker;
+use common::domain::container::Container;
 use common::domain::container::ContainerRestartPolicy;
 use common::error::runtime::RuntimeError;
 use common::port::container::ContainerRuntime;
-use common::{domain::container::Container, error::container::ContainerError};
-use futures_util::future::ok;
 
 use crate::container::mapper::ContainerInspectResponseSummary;
 use crate::container::update::update_container_restart_police;
@@ -72,7 +71,7 @@ impl ContainerRuntime for DockerRuntime {
         &'a self,
         locator: &'a str,
         status: &'a ContainerRestartPolicy,
-    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, RuntimeError>> + Send + 'a>> {
+    ) -> Pin<Box<dyn Future<Output = Result<Container, RuntimeError>> + Send + 'a>> {
         Box::pin(async move {
             match update_container_restart_police(&self.docker, locator, status.as_str()).await {
                 Ok(o) => {
@@ -82,7 +81,7 @@ impl ContainerRuntime for DockerRuntime {
                         "failed to updated restart polacy");
                         RuntimeError::MapError
                     })?;
-                    Ok(Some(container))
+                    Ok(container)
                 }
                 Err(e) => {
                     tracing::error!(error = ?e,

@@ -2,11 +2,8 @@ use std::{collections::HashMap, pin::Pin};
 
 use crate::{
     domain::container::{Container, ContainerRestartPolicy},
-    error::{container::ContainerError, runtime::RuntimeError},
+    error::runtime::RuntimeError,
 };
-// use async_trait::async_trait;
-
-// #[async_trait] Result<Vec<Container>, ContainerError>
 pub trait ContainerRuntime {
     fn containers<'service, 'filter, 'future>(
         &'service self,
@@ -28,7 +25,7 @@ pub trait ContainerRuntime {
         &'a self,
         locator: &'a str,
         status: &'a ContainerRestartPolicy,
-    ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, RuntimeError>> + Send + 'a>>;
+    ) -> Pin<Box<dyn Future<Output = Result<Container, RuntimeError>> + Send + 'a>>;
 
     fn update_state<'a>(
         &'a self,
