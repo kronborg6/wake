@@ -12,7 +12,8 @@ pub async fn update_container_restart_police(
     let config = ContainerUpdateBody {
         restart_policy: Some(RestartPolicy {
             name: Some(
-                RestartPolicyNameEnum::from_str(new_status).unwrap_or(RestartPolicyNameEnum::NO),
+                RestartPolicyNameEnum::from_str(new_status)
+                    .map_err(|_| anyhow::anyhow!("invailed restart polacy: {}", new_status))?,
             ),
             maximum_retry_count: None,
         }),

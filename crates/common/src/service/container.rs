@@ -3,7 +3,7 @@ use crate::{
     error::container::ContainerError,
     port::container::ContainerRuntime,
 };
-use std::{pin::Pin, sync::Arc};
+use std::{future::Future, pin::Pin, sync::Arc};
 
 pub struct ContainerService<R>
 where
@@ -55,18 +55,17 @@ where
         &'a self,
         locator: &'a str,
         status: &'a ContainerRestartPolicy,
-    ) -> Pin<Box<dyn Future<Output = Result<Container, ContainerError>> + Send + 'a>> {
+    ) -> Pin<Box<dyn Future<Output = Result<(), ContainerError>> + Send + 'a>> {
         Box::pin(async move {
             if locator.is_empty() {
                 return Err(ContainerError::InvaldeLocator);
             }
-            let container = self
-                .client
+            self.client
                 .update_restart_policy(locator, status)
                 .await
                 .map_err(|_| ContainerError::CreateionError)?;
 
-            Ok(container)
+            Ok(())
         })
     }
 }
