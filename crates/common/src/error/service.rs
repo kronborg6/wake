@@ -2,10 +2,12 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum ServiceError {
-    #[error("invalid email address: ")]
+    #[error("creation failed")]
     CreateionError,
-    #[error("invalid email address: ")]
+    #[error("missing id")]
     MissingId,
     #[error("invalid email address: ")]
     InvaldeLocator,
+    #[error("invalid locator")]
+    InvalidLocator,
 }
