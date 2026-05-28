@@ -13,7 +13,7 @@ pub async fn update_container_restart_police(
         restart_policy: Some(RestartPolicy {
             name: Some(
                 RestartPolicyNameEnum::from_str(new_status)
-                    .map_err(|_| anyhow::anyhow!("invailed restart polacy: {}", new_status))?,
+                    .map_err(|_| anyhow::anyhow!("invalid restart policy: {}", new_status))?,
             ),
             maximum_retry_count: None,
         }),

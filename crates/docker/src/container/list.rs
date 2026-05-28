@@ -50,13 +50,8 @@ pub async fn get_a_container(
     match docker.inspect_container(locator, Some(option)).await {
         Ok(container) => Ok(Some(container)),
         Err(bollard::errors::Error::DockerResponseServerError {
-            status_code: 404,
-            message,
-        }) => {
-            return Ok(None);
-        }
-        Err(err) => {
-            return Err(err).context("failed to get container");
-        }
+            status_code: 404, ..
+        }) => Ok(None),
+        Err(err) => Err(err).context("failed to get container"),
     }
 }
