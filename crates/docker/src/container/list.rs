@@ -44,11 +44,19 @@ pub async fn get_all_containers(
 pub async fn get_a_container(
     docker: &Docker,
     locator: &str,
-) -> anyhow::Result<ContainerInspectResponse> {
+) -> anyhow::Result<Option<ContainerInspectResponse>> {
     let option = InspectContainerOptionsBuilder::default().size(true).build();
 
-    docker
-        .inspect_container(locator, Some(option))
-        .await
-        .context("failed to get container")
+    match docker.inspect_container(locator, Some(option)).await {
+        Ok(container) => Ok(Some(container)),
+        Err(bollard::errors::Error::DockerResponseServerError {
+            status_code: 404,
+            message,
+        }) => {
+            return Ok(None);
+        }
+        Err(err) => {
+            return Err(err).context("failed to get container");
+        }
+    }
 }
