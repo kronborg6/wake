@@ -71,18 +71,10 @@ impl ContainerRuntime for DockerRuntime {
         &'a self,
         locator: &'a str,
         status: &'a ContainerRestartPolicy,
-    ) -> Pin<Box<dyn Future<Output = Result<Container, RuntimeError>> + Send + 'a>> {
+    ) -> Pin<Box<dyn Future<Output = Result<(), RuntimeError>> + Send + 'a>> {
         Box::pin(async move {
             match update_container_restart_police(&self.docker, locator, status.as_str()).await {
-                Ok(o) => {
-                    let container: Container = o.try_into().map_err(|e| {
-                        tracing::error!(error = ?e,
-                        locator = locator,
-                        "failed to updated restart polacy");
-                        RuntimeError::MapError
-                    })?;
-                    Ok(container)
-                }
+                Ok(_) => Ok(()),
                 Err(e) => {
                     tracing::error!(error = ?e,
                         locator = locator,

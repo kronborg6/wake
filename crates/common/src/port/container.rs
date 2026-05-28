@@ -25,7 +25,7 @@ pub trait ContainerRuntime {
         &'a self,
         locator: &'a str,
         status: &'a ContainerRestartPolicy,
-    ) -> Pin<Box<dyn Future<Output = Result<Container, RuntimeError>> + Send + 'a>>;
+    ) -> Pin<Box<dyn Future<Output = Result<(), RuntimeError>> + Send + 'a>>;
 
     fn update_state<'a>(
         &'a self,
