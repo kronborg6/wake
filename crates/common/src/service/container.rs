@@ -107,8 +107,7 @@ mod tests {
             &'a self,
             _locator: &'a str,
             status: &'a ContainerRestartPolicy,
-        ) -> Pin<Box<dyn Future<Output = Result<Option<Container>, RuntimeError>> + Send + 'a>>
-        {
+        ) -> Pin<Box<dyn Future<Output = Result<(), RuntimeError>> + Send + 'a>> {
             todo!()
         }
         fn update_state<'a>(
