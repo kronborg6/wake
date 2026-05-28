@@ -53,13 +53,14 @@ impl ContainerRuntime for DockerRuntime {
     {
         Box::pin(async move {
             match get_a_container(&self.docker, locator).await {
-                Ok(o) => {
+                Ok(Some(o)) => {
                     let container: Container = ContainerInspectResponseSummary(o)
                         .try_into()
                         .map_err(|_| RuntimeError::MapError)?;
 
                     Ok(Some(container))
                 }
+                Ok(None) => Ok(None),
                 Err(e) => {
                     tracing::error!(error = ?e);
                     Err(RuntimeError::Internal)
