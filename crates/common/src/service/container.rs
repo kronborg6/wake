@@ -43,7 +43,7 @@ where
     {
         Box::pin(async move {
             if locator.is_empty() {
-                return Err(ContainerError::InvaldeLocator);
+                return Err(ContainerError::InvaldeLocator(locator.to_string()));
             }
             self.client
                 .get(locator)
@@ -58,12 +58,12 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<(), ContainerError>> + Send + 'a>> {
         Box::pin(async move {
             if locator.is_empty() {
-                return Err(ContainerError::InvaldeLocator);
+                return Err(ContainerError::InvaldeLocator(locator.to_string()));
             }
             self.client
                 .update_restart_policy(locator, status)
                 .await
-                .map_err(|_| ContainerError::CreateionError)?;
+                .map_err(|_| ContainerError::CreationError)?;
 
             Ok(())
         })

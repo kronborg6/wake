@@ -2,12 +2,12 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum ContainerError {
-    #[error("invalid email address: ")]
-    CreateionError,
-    #[error("invalid email address: ")]
+    #[error("failed to create container")]
+    CreationError,
+    #[error("missing container id")]
     MissingId,
-    #[error("invalid email address: ")]
-    InvaldeLocator,
+    #[error("iinvalid container locator: {0}")]
+    InvaldeLocator(String),
     #[error("failed to fetch containers: {0}")]
     FetchingError(String),
 }
