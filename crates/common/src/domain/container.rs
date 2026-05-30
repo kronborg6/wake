@@ -1,3 +1,5 @@
+use crate::error::container::ContainerError;
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum ContainerRestartPolicy {
     Empty,
@@ -32,36 +34,38 @@ impl std::convert::From<&str> for ContainerRestartPolicy {
 }
 #[derive(Debug, PartialEq, Eq)]
 pub struct Container {
-    pub id: String,
-    pub name: Vec<String>,
-    pub restart_policy: ContainerRestartPolicy,
+    id: String,
+    name: Vec<String>,
+    restart_policy: ContainerRestartPolicy,
 }
 
-// impl Container {
-//     pub fn new(
-//         id: String,
-//         name: String,
-//         restart_policy: ContainerRestartPolicy,
-//     ) -> Result<Self, ContainerError> {
-//         if id.is_empty() || name.is_empty() {
-//             return Err(ContainerError::CreateionError);
-//         }
-//
-//         Ok(Self {
-//             id,
-//             name,
-//             restart_policy,
-//         })
-//     }
-//
-//     pub fn id(&self) -> &String {
-//         &self.id
-//     }
-//
-//     pub fn name(&self) -> &String {
-//         &self.name
-//     }
-//     pub fn restart_policy(&self) -> &ContainerRestartPolicy {
-//         &self.restart_policy
-//     }
-// }
+impl Container {
+    pub fn new(
+        id: String,
+        name: Vec<String>,
+        restart_policy: ContainerRestartPolicy,
+    ) -> Result<Self, ContainerError> {
+        if id.is_empty() || id.len() < 32 {
+            return Err(ContainerError::MissingId);
+        }
+        Ok(Self {
+            id,
+            name,
+            restart_policy,
+        })
+        // Self {
+        //     id,
+        //     name,
+        //     restart_policy,
+        // }
+    }
+    pub fn id(self) -> String {
+        self.id
+    }
+    pub fn name(self) -> Vec<String> {
+        self.name
+    }
+    pub fn restart_policy(self) -> ContainerRestartPolicy {
+        self.restart_policy
+    }
+}
