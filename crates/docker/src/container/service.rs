@@ -5,6 +5,7 @@ use common::error::runtime::RuntimeError;
 use common::port::container::ContainerRuntime;
 
 use crate::container::mapper::ContainerInspectResponseSummary;
+use crate::container::mapper::map_inspected_containers;
 use crate::container::update::update_container_restart_police;
 use crate::{client::connect, error::DockerError};
 use std::collections::HashMap;
@@ -40,6 +41,7 @@ impl ContainerRuntime for DockerRuntime {
                     tracing::error!(error = ?e);
                     RuntimeError::Internal
                 })
+                .map(|s| map_inspected_containers(s).unwrap())
         })
     }
     fn get<'service, 'locator, 'future>(
