@@ -53,11 +53,6 @@ impl Container {
             name,
             restart_policy,
         })
-        // Self {
-        //     id,
-        //     name,
-        //     restart_policy,
-        // }
     }
     pub fn id(self) -> String {
         self.id
