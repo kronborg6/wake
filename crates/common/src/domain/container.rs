@@ -18,11 +18,23 @@ impl ContainerRestartPolicy {
         }
     }
 }
+
+impl std::convert::From<&str> for ContainerRestartPolicy {
+    fn from(name: &str) -> Self {
+        match name {
+            "no" => ContainerRestartPolicy::No,
+            "always" => ContainerRestartPolicy::Always,
+            "unless-stopped" => ContainerRestartPolicy::UnlessStopped,
+            "on-failure" => ContainerRestartPolicy::OnFailure,
+            _ => ContainerRestartPolicy::Empty,
+        }
+    }
+}
 #[derive(Debug, PartialEq, Eq)]
 pub struct Container {
     pub id: String,
     pub name: Vec<String>,
-    // restart_policy: ContainerRestartPolicy,
+    pub restart_policy: ContainerRestartPolicy,
 }
 
 // impl Container {
