@@ -1,14 +1,13 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+use clap::Parser;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use crate::cli::Cli;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+mod cli;
+
+pub fn run_cli() {
+    let cli = Cli::parse();
+
+    let name = cli.name;
+
+    println!("my name is: {:?}", name);
 }
