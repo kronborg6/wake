@@ -76,7 +76,7 @@ impl Container {
         restart_policy: ContainerRestartPolicy,
         status: ContainerStateStatusEnum,
     ) -> Result<Self, ContainerError> {
-        if id.is_empty() || id.len() == 63 {
+        if id.is_empty() {
             return Err(ContainerError::MissingId);
         }
         Ok(Self {
