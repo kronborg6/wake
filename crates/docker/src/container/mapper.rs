@@ -1,25 +1,11 @@
 use anyhow::Ok;
-use bollard::plugin::{ContainerInspectResponse, ContainerSummary, RestartPolicyNameEnum};
+use bollard::plugin::ContainerInspectResponse;
 use common::{
-    domain::container::{Container, ContainerRestartPolicy},
+    domain::container::{Container, ContainerRestartPolicy, ContainerStateStatusEnum},
     error::container::ContainerError,
 };
 
-pub struct DockerContainerSummary(pub ContainerSummary);
-
 pub struct ContainerInspectResponseSummary(pub ContainerInspectResponse);
-
-impl TryInto<Container> for DockerContainerSummary {
-    type Error = ContainerError;
-    fn try_into(self) -> Result<Container, Self::Error> {
-        Ok(Container::new(
-            self.0.id.ok_or(ContainerError::MissingId)?,
-            self.0.names.unwrap_or(vec![]),
-            common::domain::container::ContainerRestartPolicy::Empty,
-        )?)
-        .map_err(|_| ContainerError::CreationError)
-    }
-}
 
 impl TryInto<Container> for ContainerInspectResponseSummary {
     type Error = ContainerError;
@@ -37,6 +23,11 @@ impl TryInto<Container> for ContainerInspectResponseSummary {
                 .and_then(|restart_policy| restart_policy.name)
                 .map(|name| ContainerRestartPolicy::from(name.as_ref()))
                 .unwrap_or(ContainerRestartPolicy::Empty),
+            self.0
+                .state
+                .and_then(|state| state.status)
+                .map(|status| ContainerStateStatusEnum::from(status.as_ref()))
+                .unwrap_or(ContainerStateStatusEnum::Empty),
         )?)
         .map_err(|_| ContainerError::CreationError)
     }

@@ -9,6 +9,35 @@ pub enum ContainerRestartPolicy {
     OnFailure,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum ContainerStateStatusEnum {
+    Empty,
+    Created,
+    Running,
+    Paused,
+    Restarting,
+    Removing,
+    Exited,
+    Dead,
+    Stopping,
+}
+
+impl std::convert::From<&str> for ContainerStateStatusEnum {
+    fn from(name: &str) -> Self {
+        match name {
+            "created" => ContainerStateStatusEnum::Created,
+            "running" => ContainerStateStatusEnum::Running,
+            "paused" => ContainerStateStatusEnum::Paused,
+            "restaring" => ContainerStateStatusEnum::Restarting,
+            "removing" => ContainerStateStatusEnum::Removing,
+            "exited" => ContainerStateStatusEnum::Exited,
+            "dead" => ContainerStateStatusEnum::Dead,
+            "stopping" => ContainerStateStatusEnum::Stopping,
+            _ => ContainerStateStatusEnum::Empty,
+        }
+    }
+}
+
 impl ContainerRestartPolicy {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -37,6 +66,7 @@ pub struct Container {
     id: String,
     name: Vec<String>,
     restart_policy: ContainerRestartPolicy,
+    status: ContainerStateStatusEnum,
 }
 
 impl Container {
@@ -44,14 +74,16 @@ impl Container {
         id: String,
         name: Vec<String>,
         restart_policy: ContainerRestartPolicy,
+        status: ContainerStateStatusEnum,
     ) -> Result<Self, ContainerError> {
-        if id.is_empty() || id.len() < 32 {
+        if id.is_empty() || id.len() == 63 {
             return Err(ContainerError::MissingId);
         }
         Ok(Self {
             id,
             name,
             restart_policy,
+            status,
         })
     }
     pub fn id(self) -> String {
@@ -62,5 +94,8 @@ impl Container {
     }
     pub fn restart_policy(self) -> ContainerRestartPolicy {
         self.restart_policy
+    }
+    pub fn status(self) -> ContainerStateStatusEnum {
+        self.status
     }
 }
