@@ -41,7 +41,12 @@ impl ContainerRuntime for DockerRuntime {
                     tracing::error!(error = ?e);
                     RuntimeError::Internal
                 })
-                .map(|s| map_inspected_containers(s).unwrap())
+                .and_then(|s| {
+                    map_inspected_containers(s).map_err(|e| {
+                        tracing::error!(error = ?e, "failed to map inspected containers");
+                        RuntimeError::MapError
+                    })
+                })
         })
     }
     fn get<'service, 'locator, 'future>(
