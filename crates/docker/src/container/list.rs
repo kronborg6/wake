@@ -25,16 +25,23 @@ pub async fn get_all_containers(
             )),
         )
         .await
-        .context("failed to get list of cotnainers");
+        .context("failed to get list of cotnainers")?;
 
     let mut con = Vec::new();
-    for container in containers.unwrap() {
-        match get_a_container(docker, &container.id.unwrap()).await {
+    for container in containers {
+        let Some(container_id) = container.id.as_deref() else {
+            tracing::error!("container entry is missing id");
+            continue;
+        };
+        match get_a_container(docker, container_id).await {
             Ok(Some(s)) => {
                 con.push(s);
             }
             e => {
-                tracing::error!(error = ?e);
+                tracing::error!(
+                error = ?e,
+                container_id = container_id
+                );
             }
         }
     }
