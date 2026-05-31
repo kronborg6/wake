@@ -28,7 +28,7 @@ impl std::convert::From<&str> for ContainerStateStatusEnum {
             "created" => ContainerStateStatusEnum::Created,
             "running" => ContainerStateStatusEnum::Running,
             "paused" => ContainerStateStatusEnum::Paused,
-            "restaring" => ContainerStateStatusEnum::Restarting,
+            "restarting" => ContainerStateStatusEnum::Restarting,
             "removing" => ContainerStateStatusEnum::Removing,
             "exited" => ContainerStateStatusEnum::Exited,
             "dead" => ContainerStateStatusEnum::Dead,
