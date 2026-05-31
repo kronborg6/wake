@@ -11,15 +11,15 @@ async fn main() {
 
     let containers = service.list().await.unwrap();
 
-    println!("{:?}", containers);
+    for container in &containers {
+        println!("{:?}", container);
+    }
 
-    let updated = service
+    service
         .update_restart_policy(
             "aeaf9a0b61c9bbebc09309d47088e8e33c74b14d2a50344f00d0efe5620a65cc",
             &ContainerRestartPolicy::Always,
         )
         .await
         .unwrap();
-
-    println!("{:?}", updated);
 }
