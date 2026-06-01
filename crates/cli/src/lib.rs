@@ -3,6 +3,7 @@ use clap::Parser;
 use crate::cli::Cli;
 
 mod cli;
+mod commands;
 
 pub fn run_cli() {
     let cli = Cli::parse();

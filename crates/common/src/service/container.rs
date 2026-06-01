@@ -7,14 +7,14 @@ use std::{future::Future, pin::Pin, sync::Arc};
 
 pub struct ContainerService<R>
 where
-    R: ContainerRuntime,
+    R: ContainerRuntime + ?Sized,
 {
     client: Arc<R>,
 }
 
 impl<R> ContainerService<R>
 where
-    R: ContainerRuntime + std::marker::Sync + std::marker::Send,
+    R: ContainerRuntime + std::marker::Sync + std::marker::Send + ?Sized,
 {
     pub fn new(client: Arc<R>) -> Self {
         Self { client }

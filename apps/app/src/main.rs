@@ -27,6 +27,9 @@ use docker::DockerRuntime;
 
 #[tokio::main]
 async fn main() {
+    let runtime = Arc::new(DockerRuntime::new().expect("no docker could be found"));
+
+    let service = ContainerService::new(runtime);
     if env::args().len() > 1 {
         run_cli();
     } else {
