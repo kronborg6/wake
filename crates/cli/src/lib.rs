@@ -7,7 +7,12 @@ mod cli;
 pub fn run_cli() {
     let cli = Cli::parse();
 
-    let name = cli.name;
+    println!("{:?}", cli);
+
+    let name = cli.locator;
+
+    let action = cli.action;
 
     println!("my name is: {:?}", name);
+    println!("action: {:?}", action);
 }

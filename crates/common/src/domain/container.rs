@@ -1,6 +1,6 @@
 use crate::error::container::ContainerError;
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ContainerRestartPolicy {
     Empty,
     No,
@@ -9,7 +9,7 @@ pub enum ContainerRestartPolicy {
     OnFailure,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ContainerStateStatusEnum {
     Empty,
     Created,

@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{env, sync::Arc};
 
 use cli::run_cli;
 use common::{domain::container::ContainerRestartPolicy, service::container::ContainerService};
@@ -27,5 +27,9 @@ use docker::DockerRuntime;
 
 #[tokio::main]
 async fn main() {
-    run_cli();
+    if env::args().len() > 1 {
+        run_cli();
+    } else {
+        println!("tui");
+    }
 }
