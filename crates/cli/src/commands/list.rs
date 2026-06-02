@@ -9,7 +9,8 @@ pub async fn ContainerList() -> Vec<Container> {
 
 pub async fn findContainer(
     service: &ContainerService<dyn ContainerRuntime + Send + Sync>,
+    locator: &str,
 ) -> Result<Container, ()> {
-    let gg = service.list().await;
+    let containers = service.list().await;
     todo!()
 }
