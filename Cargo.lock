@@ -601,6 +601,9 @@ dependencies = [
 [[package]]
 name = "fuzzy"
 version = "0.1.0"
+dependencies = [
+ "common",
+]
 
 [[package]]
 name = "generic-array"
