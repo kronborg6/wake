@@ -17,8 +17,8 @@ async fn main() {
 
     service
         .update_restart_policy(
-            "aeaf9a0b61c9bbebc09309d47088e8e33c74b14d2a50344f00d0efe5620a65cc",
-            &ContainerRestartPolicy::Always,
+            "149d78297df7f3174c03e0034684b37ee3aa30989ace7e73adb6770dac2ab68f",
+            &ContainerRestartPolicy::No,
         )
         .await
         .unwrap();
