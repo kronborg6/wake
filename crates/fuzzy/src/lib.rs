@@ -16,10 +16,9 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
 
     let target_bytes: &[u8] = target.as_bytes();
     let target_len = target.len();
-    let mut one_to_one = true;
     let mut no_match = true;
 
-    let mut match_score = 100;
+    let mut match_score: u8 = 100;
 
     let option_bytes: &[u8] = option.as_bytes();
 
@@ -28,21 +27,18 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
             if target_bytes[index] == *value {
                 no_match = false;
             } else if target_bytes.contains(value) {
-                one_to_one = false;
                 no_match = false;
                 match_score -= 3;
             } else {
                 match_score -= 5;
-                one_to_one = false;
             }
         } else {
-            one_to_one = false;
             match_score -= 6;
         }
     }
     if option_bytes.len() < target_len {
-        match_score -=
-            (u8::try_from(target_len).unwrap_or(0) - u8::try_from(option.len()).unwrap_or(0)) * 10;
+        let diff_penalty = target_len.abs_diff(option.len()) as u8 * 10;
+        match_score = match_score.saturating_sub(diff_penalty);
     }
 
     if no_match {
