@@ -4,7 +4,10 @@ members = [
     "crates/common",
     "crates/docker",
     "crates/tui",
-    "crates/cli", "example", "crates/fuzzy",
+    "crates/cli",
+    "example",
+    "crates/fuzzy",
+
 ]
 
 default-members = ["apps/app"]
