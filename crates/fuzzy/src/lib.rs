@@ -1,3 +1,5 @@
+use std::ops::SubAssign;
+
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
@@ -28,12 +30,12 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
                 no_match = false;
             } else if target_bytes.contains(value) {
                 no_match = false;
-                match_score -= 3;
+                match_score = match_score.saturating_sub(3);
             } else {
-                match_score -= 5;
+                match_score = match_score.saturating_sub(5);
             }
         } else {
-            match_score -= 6;
+            match_score -= match_score.saturating_sub(6);
         }
     }
     if option_bytes.len() < target_len {
