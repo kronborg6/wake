@@ -11,14 +11,13 @@ fn main() {
         vec!["he", "hello", "kronborg", "he", "helllo", "olleh"],
     );
 
-    println!("target: {target}\n{:?}", gg);
-}
+    println!("target: {target}");
+    for fuz in &gg {
+        println!("option: {}: {}%", fuz.0, fuz.1);
+    }
 
-// #[derive(Debug, Clone)]
-// struct Res {
-//     name: String,
-//     match_project: u8,
-// }
+    println!("{gg:?}");
+}
 
 fn seach_list<'a>(target: &str, options: Vec<&'a str>) -> Vec<(&'a str, u8)> {
     options
@@ -40,8 +39,6 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
     for (index, value) in option_bytes.iter().enumerate() {
         if index < target_len {
             if target_bytes[index] == *value {
-                println!("{target}, {option}");
-                println!("match: {}, {value}", target_bytes[index]);
                 no_match = false;
             } else if target_bytes.contains(value) {
                 one_to_one = false;
