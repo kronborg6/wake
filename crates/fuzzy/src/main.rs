@@ -1,5 +1,9 @@
 fn main() {
-    finder("hel", vec!["hello", "kronborg", "he", "helllo", "olleh"]);
+    finder(
+        "llllll",
+        vec!["hello", "kronborg", "he", "alllll", "helllo", "olleh"],
+    );
+    // finder("hel", vec!["hello", "kronborg", "he", "helllo", "olleh"]);
 }
 
 #[derive(Debug, Clone)]
@@ -41,3 +45,24 @@ fn finder(target: &str, options: Vec<&str>) {
         );
     }
 }
+
+fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
+    let target_bytes: &[u8] = target.as_bytes();
+    let target_len = target.len();
+    let mut one_to_one = true;
+
+    let option_bytes: &[u8] = option.as_bytes();
+
+    for (index, value) in option_bytes.iter().enumerate() {
+        if index < target_len {
+            // if
+        } else {
+        }
+    }
+
+    todo!()
+    // ("hello", 8)
+}
+
+// need to add a match count
+// change scroing system it need to check postin to
