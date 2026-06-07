@@ -31,12 +31,10 @@ async fn main() {
 
     let service = ContainerService::new(runtime);
     if env::args().len() > 1 {
-        run_cli();
+        run_cli(&service).await;
     } else {
         println!("tui");
     }
-<<<<<<< HEAD
-=======
 
     service
         .update_restart_policy(
@@ -45,5 +43,4 @@ async fn main() {
         )
         .await
         .unwrap();
->>>>>>> main
 }
