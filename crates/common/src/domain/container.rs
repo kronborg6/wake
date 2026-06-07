@@ -89,8 +89,8 @@ impl Container {
     pub fn id(self) -> String {
         self.id
     }
-    pub fn name(self) -> Vec<String> {
-        self.name
+    pub fn name(self) -> String {
+        self.name.first().unwrap().clone()
     }
     pub fn restart_policy(self) -> ContainerRestartPolicy {
         self.restart_policy
