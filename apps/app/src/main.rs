@@ -35,4 +35,15 @@ async fn main() {
     } else {
         println!("tui");
     }
+<<<<<<< HEAD
+=======
+
+    service
+        .update_restart_policy(
+            "149d78297df7f3174c03e0034684b37ee3aa30989ace7e73adb6770dac2ab68f",
+            &ContainerRestartPolicy::No,
+        )
+        .await
+        .unwrap();
+>>>>>>> main
 }

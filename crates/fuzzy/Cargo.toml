@@ -1,0 +1,15 @@
+[package]
+name = "fuzzy"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+common = {path = "../common"}
+
+[lib]
+name = "fuzzy"
+path = "src/lib.rs"
+
+[[bin]]
+name = "ff"
+path = "src/main.rs"
