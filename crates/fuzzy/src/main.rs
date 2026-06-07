@@ -7,11 +7,13 @@ fn main() {
     // );
     // finder("hel", vec!["hello", "kronborg", "he", "helllo", "olleh"]);
 
-    let target = "dough-db";
+    let target = "/compose-postgres-1";
     let gg = seach_list(
         target,
         vec![
-            "he", "hello", "db", "dough", "dough db", "kronborg", "he", "helllo", "olleh",
+            // "he", "hello", "compose", "postgres", "dough db", "kronborg", "he", "helllo",
+            "olleh",
+            "olleh", // "he", "hello", "db", "dough", "dough db", "kronborg", "he", "helllo", "olleh",
         ],
     );
 
