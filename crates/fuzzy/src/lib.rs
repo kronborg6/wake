@@ -88,32 +88,26 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
 
     // let mut maxlen = 0;
 
-    let hmap = target_bytes.iter().fold(HashMap::new(), |mut acc, v| {
-        println!("{acc:?}");
-        println!("{v:?}");
-        let counter = acc.entry(v).or_insert(0);
-        *counter += 1;
+    let target_hmap = target_bytes.iter().fold(HashMap::new(), |mut acc, &byte| {
+        *acc.entry(byte).or_insert(0) += 1;
+        acc
+    });
+
+    let option_hmap = option_bytes.iter().fold(HashMap::new(), |mut acc, &byte| {
+        *acc.entry(byte).or_insert(0) += 1;
         acc
     });
     // println!("{target_bytes:?}");
-    // println!("{hmap:?}");
+    println!("{option_hmap:?}");
+    println!("{target_hmap:?}");
     if target_len <= option_len {
-        // let hh = HashMap::new();
-
-        // let hmap = target_bytes.iter().fold(HashMap::new(), |mut acc, v| {
-        //     let counter = acc.entry(v).or_insert(0);
-        //     *counter += 1;
-        //     acc
-        // });
-        // for i in 0..target_len {
-        //     // hh.
-        //
-        //
-        // }
+        for (key, count) in &option_hmap {
+            println!("[{key}]: {count}");
+        }
     } else {
-        // for i in 0..option_len {
-        //
-        // }
+        for (key, count) in &target_hmap {
+            println!("[{key}]: {count}");
+        }
     }
 
     for (index, value) in option_bytes.iter().enumerate() {
