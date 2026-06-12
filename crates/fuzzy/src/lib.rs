@@ -85,51 +85,71 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
 
     let mut multiplayer = 0.0;
 
-    let mut combo = true;
-
     // let mut maxlen = 0;
 
-    let target_hmap = target_bytes.iter().fold(HashMap::new(), |mut acc, &byte| {
+    let _target_hmap = target_bytes.iter().fold(HashMap::new(), |mut acc, &byte| {
         *acc.entry(byte).or_insert(0) += 1;
         acc
     });
 
-    let option_hmap = option_bytes.iter().fold(HashMap::new(), |mut acc, &byte| {
+    let _option_hmap = option_bytes.iter().fold(HashMap::new(), |mut acc, &byte| {
         *acc.entry(byte).or_insert(0) += 1;
         acc
     });
 
     let mut match_array: Vec<bool> = Vec::new();
+    for (index, value) in target_bytes.iter().enumerate() {
+        if option_len > index && option_bytes[index] == *value {
+            match_array.push(true);
+        } else {
+            match_array.push(false);
+        }
+    }
+
+    let gg = match_array.iter().filter(|&x| *x).count() as f32 / target_len as f32;
+
+    println!("{gg:?}");
+    println!("{target_len:?}");
+    println!("{gg:?}");
+
     // println!("{target_bytes:?}");
-    println!("{option_hmap:?}");
-    println!("{target_hmap:?}");
-    if target_len <= option_len {
-        for (index, value) in target_bytes.iter().enumerate() {
-            if option_bytes[index] == *value {
-                match_array.push(true);
-            } else {
-                match_array.push(false);
-            }
-        }
+    // println!("{option_hmap:?}");
+    // println!("{target_hmap:?}");
+    // if target_len <= option_len {
+    //     }
+    //
+    //     for (key, count) in &option_hmap {
+    //         println!("[{key}]: {count}");
+    //     }
+    // } else {
+    //     for (index, value) in option_bytes.iter().enumerate() {
+    //         if target_bytes[index] == *value {
+    //             match_array.push(true);
+    //         } else {
+    //             match_array.push(false);
+    //         }
+    //     }
+    //
+    //     for (key, count) in &target_hmap {
+    //         println!("[{key}]: {count}");
+    //     }
 
-        for (key, count) in &option_hmap {
-            println!("[{key}]: {count}");
-        }
-    } else {
-        for (index, value) in option_bytes.iter().enumerate() {
-            if target_bytes[index] == *value {
-                match_array.push(true);
-            } else {
-                match_array.push(false);
+    for value in &match_array {
+        if *value {
+            if multiplayer >= 0.0 {
+                multiplayer += 0.001;
+                multiplayer *= multiplayer;
             }
-        }
-
-        for (key, count) in &target_hmap {
-            println!("[{key}]: {count}");
+        } else {
+            if multiplayer >= 0.0 {
+                // multiplayer -= 0.5;
+                multiplayer -= 0.5 * multiplayer;
+            }
         }
     }
 
     println!("{match_array:?}");
+    println!("{multiplayer:?}");
 
     // need to make this dymaci
 
