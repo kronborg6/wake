@@ -171,13 +171,59 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
     (option, match_score)
 }
 
+pub fn finder(target: &str, option: &str) {
+    let target_bytes: &[u8] = target.as_bytes();
+    let target_len = target.len();
+
+    let option_bytes: &[u8] = option.as_bytes();
+    let option_len = option.len();
+
+    let mut match_d2: Vec<Vec<u8>> = Vec::new();
+
+    // need to ranger from last check not from the start agian good idea chatGPT
+    let mut match_result: Vec<u8> = vec![0; option_len];
+    for (index, value) in option_bytes.iter().enumerate() {
+        if index < target_len && *value == target_bytes[index] {
+            match_result[index] = *value;
+            continue;
+        }
+    }
+
+    println!("{target:?}");
+    println!("{option:?}");
+    println!("{match_result:?}");
+    // let mut match_result: Vec<u8> = vec![0; option_len];
+    // for (index, value) in option_bytes.iter().enumerate() {
+    //     let mut match_result: Vec<u8> = vec![0; option_len];
+    //     // let mut match_result: Vec<u8> = Vec::new();
+    //     for x in target_bytes {
+    //         if index < target_len && x == value {
+    //             match_result[index] = *x;
+    //             break;
+    //         }
+    //     }
+    //     match_d2.push(match_result);
+    // }
+    //
+    // println!("{target:?}");
+    // println!("{option:?}");
+    // // println!("{match_result:?}");
+    // for res in match_d2 {
+    //     println!("{res:?}");
+    // }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        // finder("hewllo", "hello");
+        // finder("hello", "hello");
+        finder("hello", "hlieo");
+        finder("hello", "hhewlo");
+        finder("hello", "llll");
+        finder("hello", "lellpo");
     }
 }
