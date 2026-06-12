@@ -73,6 +73,7 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
 
     let mut score = 0.0;
     let mut no_match = true;
+    let mut combo_count = 0;
 
     let target_bytes: &[u8] = target.as_bytes();
     let target_len = target.len();
@@ -97,34 +98,38 @@ pub fn compare<'a>(target: &str, option: &'a str) -> (&'a str, u8) {
         *acc.entry(byte).or_insert(0) += 1;
         acc
     });
+
+    let mut match_array: Vec<bool> = Vec::new();
     // println!("{target_bytes:?}");
     println!("{option_hmap:?}");
     println!("{target_hmap:?}");
     if target_len <= option_len {
+        for (index, value) in target_bytes.iter().enumerate() {
+            if option_bytes[index] == *value {
+                match_array.push(true);
+            } else {
+                match_array.push(false);
+            }
+        }
+
         for (key, count) in &option_hmap {
             println!("[{key}]: {count}");
         }
     } else {
+        for (index, value) in option_bytes.iter().enumerate() {
+            if target_bytes[index] == *value {
+                match_array.push(true);
+            } else {
+                match_array.push(false);
+            }
+        }
+
         for (key, count) in &target_hmap {
             println!("[{key}]: {count}");
         }
     }
 
-    for (index, value) in option_bytes.iter().enumerate() {
-        if target_bytes[index] == *value {
-            if combo {
-                multiplayer += 0.1;
-            }
-            combo = true;
-        } else {
-            combo = false;
-            if multiplayer > 0.2 {
-                score *= multiplayer;
-            }
-
-            // if
-        }
-    }
+    println!("{match_array:?}");
 
     // need to make this dymaci
 

@@ -12,7 +12,7 @@ fn main() {
         target,
         vec![
             // "he", "hello", "compose", "postgres", "dough db", "kronborg", "he", "helllo",
-            "olleh",
+            "ollmh",
             "olleh", // "he", "hello", "db", "dough", "dough db", "kronborg", "he", "helllo", "olleh",
         ],
     );
